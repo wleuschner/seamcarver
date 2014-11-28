@@ -1,6 +1,7 @@
 #include "seamcarving.h"
 #include <cmath>
 #include <QDebug>
+#include <cmath>
 
 SeamCarving::SeamCarving(QImage& img):image(img)
 {
@@ -22,7 +23,7 @@ int SeamCarving::getEnergy(int x, int y){
     int g1 = Gx.pixel(x,y);
     int g2 = Gy.pixel(x,y);
 
-    return g1+g2;
+    return abs(g1)+abs(g2);
 }
 
 void SeamCarving::findSeam(){
@@ -47,7 +48,7 @@ void SeamCarving::findSeam(){
                     end = 1;
                 }
                 for(int i = start; i < end; i++){
-                    int j = i+y*image.width();
+                    int j = x+i+y*image.width();
                     if(M[j] < min){
                         min = M[j];
                     }
@@ -64,7 +65,8 @@ void SeamCarving::findSeam(){
     int min = INT_MAX;
     int y = image.height()-1;
     for(int x = 0; x < image.width(); x++){
-        if(M[x+y*image.width()] < min){
+        qDebug()<<M[x+y*image.width()];
+        if(M[x+y*image.width()] <= min){
             min = M[x+y*image.width()];
             seam[y] = x;
         }
@@ -85,7 +87,7 @@ void SeamCarving::findSeam(){
             end = 1;
         }
         for(int i = start; i < end; i++){
-            int j = i+y*image.width();
+            int j = x+i+y*image.width();
             if(M[j] < min){
                 min = M[j];
                 seam[y] = x + i;
@@ -101,7 +103,7 @@ void SeamCarving::removeSeam(){
     for (int i = 0; i < seam.size(); i++){
         //image.setPixel(seam[i],i,qRgb(255,0,0));
         pixs[seam[i]+i*image.width()] = (unsigned int) qRgb(255,0,0);
-        qDebug()<<seam[i];
+        //qDebug()<<seam[i];
     }
 }
 
