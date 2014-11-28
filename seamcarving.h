@@ -14,6 +14,7 @@ public:
     QImage getGY();
 
 private:
+    QImage greyTones(const QImage& image);
     QImage conv(const QImage& image,double* mat);
 
     int getEnergy(int x, int y);

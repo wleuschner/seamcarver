@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->unifiedTitleAndToolBarOnMac();
     ui->menuBar->setNativeMenuBar(false);
     connect(ui->actionOpen, SIGNAL(triggered()), SLOT(openAction()));
+    connect(ui->actionRemove_Seam,SIGNAL(triggered()),SLOT(removeSeamAction()));
 }
 
 MainWindow::~MainWindow()
@@ -29,8 +30,12 @@ void MainWindow::openAction(){
         image = QImage(fd.selectedFiles()[0]);
         qDebug() << "Path: " << fd.selectedFiles()[0];
         ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
-        SeamCarving sc(image);
-        sc.removeSeam();
-        ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
     }
+}
+
+void MainWindow::removeSeamAction()
+{
+    SeamCarving sc(image);
+    sc.removeSeam();
+    ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
 }
