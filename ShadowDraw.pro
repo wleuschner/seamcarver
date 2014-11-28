@@ -16,7 +16,9 @@ LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-<<<<<<< HEAD
+<<<<<<< HEAD \
+    seamcarving.cpp \
+    drawwidget.cpp
     histogramdialog.cpp \
     convolutedialog.cpp \
     resizedialog.cpp
