@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QImage>
+#include "drawwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,8 +17,15 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void openAction();
+
 private:
+
     Ui::MainWindow *ui;
+    DrawWidget *drawArea;
+
+    QImage image;
 };
 
 #endif // MAINWINDOW_H
