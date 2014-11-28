@@ -10,9 +10,15 @@ public:
     SeamCarving(QImage image);
     void removeSeam();
 
+    QImage getGX();
+    QImage getGY();
+
 private:
+    QImage conv(const QImage& image,double* mat);
+
     int getEnergy(int x, int y);
     void findSeam();
+    void calculateGradients();
     QImage image;
     QImage Gx;
     QImage Gy;

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QDebug>
+#include "seamcarving.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,11 +23,13 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::openAction(){
-    QFileDialog fd(this, "Open Image", "/Users/Alan", "Image(*.jpg *.bmp *.tif *.png)");
+    QFileDialog fd(this, "Open Image", "", "Image(*.jpg *.bmp *.tif *.png)");
     fd.setFileMode(QFileDialog::ExistingFile);
     if(fd.exec()){
         image = QImage(fd.selectedFiles()[0]);
         qDebug() << "Path: " << fd.selectedFiles()[0];
         ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
+        SeamCarving sc(image);
+        ui->ImageViewer->setPixmap(QPixmap::fromImage(sc.getGX()));
     }
 }

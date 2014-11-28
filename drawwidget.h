@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QPoint>
 #include <QColor>
+#include <QFileDialog>
 
 class DrawWidget : public QWidget
 {
