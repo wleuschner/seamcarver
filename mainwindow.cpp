@@ -30,6 +30,7 @@ void MainWindow::openAction(){
         qDebug() << "Path: " << fd.selectedFiles()[0];
         ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
         SeamCarving sc(image);
-        ui->ImageViewer->setPixmap(QPixmap::fromImage(sc.getGX()));
+        sc.removeSeam();
+        ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
     }
 }

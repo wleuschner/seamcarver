@@ -7,7 +7,7 @@
 class SeamCarving
 {
 public:
-    SeamCarving(QImage image);
+    SeamCarving(QImage& image);
     void removeSeam();
 
     QImage getGX();
@@ -19,7 +19,7 @@ private:
     int getEnergy(int x, int y);
     void findSeam();
     void calculateGradients();
-    QImage image;
+    QImage& image;
     QImage Gx;
     QImage Gy;
     std::vector<int> seam;

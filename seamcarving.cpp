@@ -1,9 +1,10 @@
 #include "seamcarving.h"
 #include <cmath>
+#include <QDebug>
 
-SeamCarving::SeamCarving(QImage img)
+SeamCarving::SeamCarving(QImage& img):image(img)
 {
-       image = img;
+       //image = img;
        calculateGradients();
 }
 
@@ -17,6 +18,93 @@ QImage SeamCarving::getGY()
     return Gy;
 }
 
+int SeamCarving::getEnergy(int x, int y){
+    int g1 = Gx.pixel(x,y);
+    int g2 = Gy.pixel(x,y);
+
+    return g1+g2;
+}
+
+void SeamCarving::findSeam(){
+    int* M =(int*) malloc(sizeof(int)*image.width()*image.height());
+    for (int y = 0; y < image.height(); y++){
+        for(int x = 0; x < image.width(); x++){
+
+            int i  = x+y*image.width();
+
+            if(y == 0){
+                //first row
+                M[i] = getEnergy(x,y);
+            } else {
+                int min = INT_MAX;
+
+                //get minimum of predeccesors
+                int start = -1;
+                int end = 2;
+                if(x == 0){ //depends on k
+                    start = 0;
+                }else if(x == image.width()-1){ //depends on k
+                    end = 1;
+                }
+                for(int i = start; i < end; i++){
+                    int j = i+y*image.width();
+                    if(M[j] < min){
+                        min = M[j];
+                    }
+                }
+                M[i] = getEnergy(x,y) + min;
+            }
+
+        }
+    }
+
+    //M is calculated backtrack best seam
+    seam.resize(image.height());
+    //find minimum in last row
+    int min = INT_MAX;
+    int y = image.height()-1;
+    for(int x = 0; x < image.width(); x++){
+        if(M[x+y*image.width()] < min){
+            min = M[x+y*image.width()];
+            seam[y] = x;
+        }
+    }
+
+    //start backtrack
+    for(int y = image.height()-2; y >= 0; y--){
+        int x = seam[y+1];
+
+        int min = INT_MAX;
+
+        //get minimum of predeccesors
+        int start = -1;
+        int end = 2;
+        if(x == 0){ //depends on k
+            start = 0;
+        }else if(x == image.width()-1){ //depends on k
+            end = 1;
+        }
+        for(int i = start; i < end; i++){
+            int j = i+y*image.width();
+            if(M[j] < min){
+                min = M[j];
+                seam[y] = x + i;
+            }
+        }
+    }
+}
+
+void SeamCarving::removeSeam(){
+    findSeam();
+
+    unsigned int* pixs = (unsigned int*) image.bits();
+    for (int i = 0; i < seam.size(); i++){
+        //image.setPixel(seam[i],i,qRgb(255,0,0));
+        pixs[seam[i]+i*image.width()] = (unsigned int) qRgb(255,0,0);
+        qDebug()<<seam[i];
+    }
+}
+
 void SeamCarving::calculateGradients(){
     double dx[] =  {-1, 0,1,
                     -1, 0,1,
@@ -28,7 +116,6 @@ void SeamCarving::calculateGradients(){
 
     //Gx = QImage(image.width(),image.height(),QImage::Format_ARGB32);
     //Gy = QImage(image.width(),image.height(),QImage::Format_ARGB32);
-    unsigned int *pixs = (unsigned int*) image.bits();
     Gx = conv(image,dx);
     Gy = conv(image,dy);
 }
