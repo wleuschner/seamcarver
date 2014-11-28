@@ -130,6 +130,7 @@ QImage SeamCarving::conv(const QImage& image,double* mat)
             dst[x+y*image.width()]=qRgb(color,color,color);
         }
     }
+
     QImage conv_img((unsigned char*)dst,width,height,QImage::Format_ARGB32);
     return conv_img;
 }
