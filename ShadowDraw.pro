@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    drawwidget.cpp
+    drawwidget.cpp \
+    seamcarving.cpp
 
 HEADERS  += mainwindow.h \
-    drawwidget.h
+    drawwidget.h \
+    seamcarving.h
 
 FORMS    += mainwindow.ui
