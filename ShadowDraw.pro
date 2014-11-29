@@ -16,12 +16,15 @@ SOURCES += main.cpp\
             mainwindow.cpp \
             drawwidget.cpp \
             seamcarving.cpp \
-    energydistview.cpp
+    energydistview.cpp \
+    gradientenergy.cpp
 
 HEADERS  += mainwindow.h \
             drawwidget.h \
             seamcarving.h \
-    energydistview.h
+    energydistview.h \
+    energyfunctioni.h \
+    gradientenergy.h
 
 FORMS    += mainwindow.ui \
     energydistview.ui

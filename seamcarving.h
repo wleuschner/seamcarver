@@ -10,20 +10,14 @@ class SeamCarving
 public:
     SeamCarving(QImage& image);
     void removeSeamV();
-    QImage getGX();
-    QImage getGY();
-    QImage energyDist;
-    void findSeamV();
-private:
-    QImage greyTones(const QImage& image);
-    QImage conv(const QImage& image,double* mat);
-    void saveEnergyDist(long long* M);
 
+    QImage energyDist;
+private:
+    void saveEnergyDist(long long* M);
+    void findSeamV();
     int getEnergy(int x, int y);
-    void calculateGradients();
+
     QImage& image;
-    QImage Gx;
-    QImage Gy;
     std::vector<int> seam;
 };
 
