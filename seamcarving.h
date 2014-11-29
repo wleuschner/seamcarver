@@ -12,13 +12,14 @@ public:
     void removeSeamV();
     QImage getGX();
     QImage getGY();
-
+    QImage energyDist;
+    void findSeamV();
 private:
     QImage greyTones(const QImage& image);
     QImage conv(const QImage& image,double* mat);
+    void saveEnergyDist(long long* M);
 
     int getEnergy(int x, int y);
-    void findSeamV();
     void calculateGradients();
     QImage& image;
     QImage Gx;

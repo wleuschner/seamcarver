@@ -19,14 +19,14 @@ QImage SeamCarving::getGY()
 }
 
 int SeamCarving::getEnergy(int x, int y){
-    int g1 = Gx.pixel(x,y);
-    int g2 = Gy.pixel(x,y);
+    int g1 = qRed(Gx.pixel(x,y));
+    int g2 = qRed(Gy.pixel(x,y));
 
-    return abs(g1)+abs(g2);
+    return abs(g1-128)+abs(g2-128);
 }
 
 void SeamCarving::findSeamV(){
-    int* M =(int*) malloc(sizeof(int)*image.width()*image.height());
+    long long* M =(long long*) malloc(sizeof(long long)*image.width()*image.height());
     for (int y = 0; y < image.height(); y++){
         for(int x = 0; x < image.width(); x++){
 
@@ -36,23 +36,26 @@ void SeamCarving::findSeamV(){
                 //first row
                 M[i] = getEnergy(x,y);
             } else {
-                int min = INT_MAX;
+                long long min = LONG_LONG_MAX;
 
                 //get minimum of predeccesors
                 int start = -1;
                 int end = 2;
+
                 if(x == 0){ //depends on k
                     start = 0;
                 }else if(x == image.width()-1){ //depends on k
                     end = 1;
                 }
+
                 for(int i = start; i < end; i++){
-                    int j = x+i+y*image.width();
+                    int j = x+i+(y-1)*image.width();
                     if(M[j] < min){
                         min = M[j];
                     }
                 }
-                M[i] = getEnergy(x,y) + min;
+                //qDebug()<<"min: "<< min;
+                M[i] = getEnergy(x,y)+min;
             }
 
         }
@@ -61,7 +64,7 @@ void SeamCarving::findSeamV(){
     //M is calculated backtrack best seam
     seam.resize(image.height());
     //find minimum in last row
-    int min = INT_MAX;
+    long long min = LONG_LONG_MAX;
     int y = image.height()-1;
     for(int x = 0; x < image.width(); x++){
         //qDebug()<<M[x+y*image.width()];
@@ -69,13 +72,14 @@ void SeamCarving::findSeamV(){
             min = M[x+y*image.width()];
             seam[y] = x;
         }
+        qDebug() << seam[y];
     }
 
     //start backtrack
     for(int y = image.height()-2; y >= 0; y--){
         int x = seam[y+1];
 
-        int min = INT_MAX;
+        long long min = LONG_LONG_MAX;
 
         //get minimum of predeccesors
         int start = -1;
@@ -93,6 +97,27 @@ void SeamCarving::findSeamV(){
             }
         }
     }
+    saveEnergyDist(M);
+    free(M);
+}
+
+void SeamCarving::saveEnergyDist(long long* M){
+    qDebug()<<"small of M" <<M[0];
+    energyDist = QImage(image.width(),image.height(), QImage::Format_ARGB32);
+    unsigned int* pixs = (unsigned int*) energyDist.bits();
+    long long max = LONG_LONG_MIN;
+    for (int i = 0; i < image.width()*image.height(); i++){
+        if (M[i] > max)
+            max = M[i];
+    }
+    qDebug()<<"max of M: " << max;
+    double e = 0;
+    for (int i = 0; i < image.width()*image.height(); i++){
+        e = (double)M[i]/(double)max;
+        e *= 255;
+        pixs[i] = qRgb(e,e,e);
+    }
+
 }
 
 void SeamCarving::removeSeamV(){
@@ -240,7 +265,7 @@ QImage SeamCarving::conv(const QImage& image,double* mat)
             }
             else if(color<0)
             {
-                color=0;
+                color = 0;
             }
             dst[x+y*image.width()]=qRgb(color,color,color);
         }

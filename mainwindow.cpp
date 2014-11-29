@@ -38,7 +38,8 @@ void MainWindow::removeSeamAction()
 {
     SeamCarving sc(image);
     sc.removeSeamV();
-    ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
+    ui->ImageViewer->setPixmap(QPixmap::fromImage(sc.energyDist));
+
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event){
