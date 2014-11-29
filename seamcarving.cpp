@@ -26,7 +26,7 @@ int SeamCarving::getEnergy(int x, int y){
     return abs(g1)+abs(g2);
 }
 
-void SeamCarving::findSeam(){
+void SeamCarving::findSeamV(){
     int* M =(int*) malloc(sizeof(int)*image.width()*image.height());
     for (int y = 0; y < image.height(); y++){
         for(int x = 0; x < image.width(); x++){
@@ -96,15 +96,22 @@ void SeamCarving::findSeam(){
     }
 }
 
-void SeamCarving::removeSeam(){
+void SeamCarving::removeSeamV(){
     findSeam();
 
     unsigned int* pixs = (unsigned int*) image.bits();
     for (int i = 0; i < seam.size(); i++){
-        //image.setPixel(seam[i],i,qRgb(255,0,0));
-        pixs[seam[i]+i*image.width()] = (unsigned int) qRgb(255,0,0);
         //qDebug()<<seam[i];
+        //pixs[seam[i]+i*image.width()] = (unsigned int) qRgb(255,0,0);
+
+        //move array to remove pixel
+        for(int x=seam[i];x<image.width()-1;x++)
+        {
+            pixs[seam[i]+i*image.width()]=pixs[seam[i]+x+i*image.width()];
+        }
+        qDebug()<<seam[i];
     }
+    image = image.copy(0,0,image.width()-1,image.height());
 }
 
 void SeamCarving::calculateGradients(){
@@ -118,8 +125,28 @@ void SeamCarving::calculateGradients(){
 
     //Gx = QImage(image.width(),image.height(),QImage::Format_ARGB32);
     //Gy = QImage(image.width(),image.height(),QImage::Format_ARGB32);
-    Gx = conv(image,dx);
-    Gy = conv(image,dy);
+    Gx = conv(greyTones(image),dx);
+    Gy = conv(greyTones(image),dy);
+}
+
+QImage SeamCarving::greyTones(const QImage& image)
+{
+    unsigned int* dst=(unsigned int*)malloc(sizeof(unsigned int)*image.width()*image.height());
+    const unsigned int* src=(unsigned int*)image.bits();
+    for(int y=0;y<image.height();y++)
+    {
+        for(int x=0;x<image.width();x++)
+        {
+            unsigned int c=src[x+y*image.width()];
+            unsigned int r=qRed(c);
+            unsigned int g=qGreen(c);
+            unsigned int b=qBlue(c);
+            unsigned int gs=(0.299f*r+0.587f*g+0.114f*b);
+            dst[x+y*image.width()]=qRgba(gs,gs,gs,255);
+        }
+    }
+    QImage grey_image((unsigned char*)dst,image.width(),image.height(),QImage::Format_ARGB32);
+    return grey_image;
 }
 
 QImage SeamCarving::conv(const QImage& image,double* mat)

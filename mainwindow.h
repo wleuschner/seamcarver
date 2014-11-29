@@ -19,6 +19,7 @@ public:
 
 private slots:
     void openAction();
+    void removeSeamAction();
 
 private:
 

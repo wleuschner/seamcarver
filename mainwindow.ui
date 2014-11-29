@@ -21,16 +21,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -51,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>594</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -73,6 +64,8 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionRemove_Seam"/>
+    <addaction name="actionAdd_Seam"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -112,6 +105,19 @@
   <action name="actionShow_Gradients">
    <property name="text">
     <string>Show Gradients</string>
+   </property>
+  </action>
+  <action name="actionRemove_Seam">
+   <property name="text">
+    <string>Remove Seam</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionAdd_Seam">
+   <property name="text">
+    <string>Add Seam</string>
    </property>
   </action>
  </widget>

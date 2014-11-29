@@ -8,16 +8,17 @@ class SeamCarving
 {
 public:
     SeamCarving(QImage& image);
-    void removeSeam();
+    void removeSeamV();
 
     QImage getGX();
     QImage getGY();
 
 private:
+    QImage greyTones(const QImage& image);
     QImage conv(const QImage& image,double* mat);
 
     int getEnergy(int x, int y);
-    void findSeam();
+    void findSeamV();
     void calculateGradients();
     QImage& image;
     QImage Gx;
