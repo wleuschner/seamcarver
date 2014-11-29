@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuBar->setNativeMenuBar(false);
     connect(ui->actionOpen, SIGNAL(triggered()), SLOT(openAction()));
     connect(ui->actionRemove_Seam,SIGNAL(triggered()),SLOT(removeSeamAction()));
+    connect(ui->actionShow_Energy_Distribution, SIGNAL(triggered()), &ed_view, SLOT(show()));
+    connect(this, SIGNAL(sendEnergyDest(QImage&)), &ed_view, SLOT(receiveEnergyDist(QImage&)));
 }
 
 MainWindow::~MainWindow()
@@ -30,7 +32,9 @@ void MainWindow::openAction(){
     if(fd.exec()){
         image = QImage(fd.selectedFiles()[0]);
         qDebug() << "Path: " << fd.selectedFiles()[0];
+        this->resize(image.size());
         ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
+        emit sendEnergyDest(sc.energyDist);
     }
 }
 
@@ -38,7 +42,8 @@ void MainWindow::removeSeamAction()
 {
     SeamCarving sc(image);
     sc.removeSeamV();
-    ui->ImageViewer->setPixmap(QPixmap::fromImage(sc.energyDist));
+    emit sendEnergyDest(sc.energyDist);
+    ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
 
 }
 
@@ -50,6 +55,6 @@ void MainWindow::resizeEvent(QResizeEvent *event){
             sc.removeSeamV();
         }
     }
-
-
+    ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
+    emit sendEnergyDest(sc.energyDist);
 }

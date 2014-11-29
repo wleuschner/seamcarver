@@ -15,10 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
             mainwindow.cpp \
             drawwidget.cpp \
-            seamcarving.cpp
+            seamcarving.cpp \
+    energydistview.cpp
 
 HEADERS  += mainwindow.h \
             drawwidget.h \
-            seamcarving.h
+            seamcarving.h \
+    energydistview.h
 
 FORMS    += mainwindow.ui \
+    energydistview.ui

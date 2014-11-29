@@ -5,7 +5,7 @@
 
 SeamCarving::SeamCarving(QImage& img):image(img)
 {
-    calculateGradients();
+
 }
 
 QImage SeamCarving::getGX()
@@ -26,6 +26,7 @@ int SeamCarving::getEnergy(int x, int y){
 }
 
 void SeamCarving::findSeamV(){
+    calculateGradients();
     long long* M =(long long*) malloc(sizeof(long long)*image.width()*image.height());
     for (int y = 0; y < image.height(); y++){
         for(int x = 0; x < image.width(); x++){
@@ -72,7 +73,7 @@ void SeamCarving::findSeamV(){
             min = M[x+y*image.width()];
             seam[y] = x;
         }
-        qDebug() << seam[y];
+        //qDebug() << seam[y];
     }
 
     //start backtrack
@@ -102,7 +103,7 @@ void SeamCarving::findSeamV(){
 }
 
 void SeamCarving::saveEnergyDist(long long* M){
-    qDebug()<<"small of M" <<M[0];
+    //qDebug()<<"small of M" <<M[0];
     energyDist = QImage(image.width(),image.height(), QImage::Format_ARGB32);
     unsigned int* pixs = (unsigned int*) energyDist.bits();
     long long max = LONG_LONG_MIN;
@@ -110,7 +111,7 @@ void SeamCarving::saveEnergyDist(long long* M){
         if (M[i] > max)
             max = M[i];
     }
-    qDebug()<<"max of M: " << max;
+    //qDebug()<<"max of M: " << max;
     double e = 0;
     for (int i = 0; i < image.width()*image.height(); i++){
         e = (double)M[i]/(double)max;
@@ -122,7 +123,6 @@ void SeamCarving::saveEnergyDist(long long* M){
 
 void SeamCarving::removeSeamV(){
     findSeamV();
-
     unsigned int* pixs = (unsigned int*) image.bits();
     for (int i = 0; i < seam.size(); i++){
         //qDebug()<<seam[i];

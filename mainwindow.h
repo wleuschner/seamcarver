@@ -5,6 +5,7 @@
 #include <QImage>
 #include "drawwidget.h"
 #include <QResizeEvent>
+#include "energydistview.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,11 +21,16 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event);
 
+signals:
+
+    void sendEnergyDest(QImage &i);
 private slots:
     void openAction();
     void removeSeamAction();
 
 private:
+
+    EnergyDistView ed_view;
 
     Ui::MainWindow *ui;
     DrawWidget *drawArea;
