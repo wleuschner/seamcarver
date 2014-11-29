@@ -14,6 +14,7 @@ public:
     QImage getGY();
     QImage energyDist;
     void findSeamV();
+    QImage getImage();
 private:
     QImage greyTones(const QImage& image);
     QImage conv(const QImage& image,double* mat);
@@ -25,6 +26,9 @@ private:
     QImage Gx;
     QImage Gy;
     std::vector<int> seam;
+
+    int width;
+    int height;
 };
 
 #endif // SEAMCARVING_H
