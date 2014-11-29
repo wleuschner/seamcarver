@@ -106,7 +106,7 @@ void SeamCarving::removeSeamV(){
         //move array to remove pixel
         for(int x=seam[i];x<image.width()-1;x++)
         {
-            pixs[seam[i]+i*image.width()]=pixs[seam[i]+x+i*image.width()];
+            pixs[x+i*image.width()]=pixs[x+1+i*image.width()];
         }
         //qDebug()<<seam[i];
     }
