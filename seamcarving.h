@@ -12,6 +12,9 @@ public:
     void removeSeamV();
 
     QImage energyDist;
+    void findSeamV();
+    QImage getImage();
+
 private:
     void saveEnergyDist(long long* M);
     void findSeamV();
@@ -19,6 +22,9 @@ private:
 
     QImage& image;
     std::vector<int> seam;
+
+    int width;
+    int height;
 };
 
 #endif // SEAMCARVING_H

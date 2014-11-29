@@ -5,6 +5,7 @@
 #include <QImage>
 #include "drawwidget.h"
 #include <QResizeEvent>
+#include "seamcarving.h"
 #include "energydistview.h"
 
 namespace Ui {
@@ -26,10 +27,11 @@ signals:
     void sendEnergyDest(QImage &i);
 private slots:
     void openAction();
+    void saveAsAction();
     void removeSeamAction();
 
 private:
-
+    SeamCarving* sc;
     EnergyDistView ed_view;
 
     Ui::MainWindow *ui;
