@@ -5,8 +5,7 @@
 
 SeamCarving::SeamCarving(QImage& img):image(img)
 {
-       //image = img;
-       calculateGradients();
+    calculateGradients();
 }
 
 QImage SeamCarving::getGX()
@@ -65,7 +64,7 @@ void SeamCarving::findSeamV(){
     int min = INT_MAX;
     int y = image.height()-1;
     for(int x = 0; x < image.width(); x++){
-        qDebug()<<M[x+y*image.width()];
+        //qDebug()<<M[x+y*image.width()];
         if(M[x+y*image.width()] <= min){
             min = M[x+y*image.width()];
             seam[y] = x;
@@ -97,7 +96,7 @@ void SeamCarving::findSeamV(){
 }
 
 void SeamCarving::removeSeamV(){
-    findSeam();
+    findSeamV();
 
     unsigned int* pixs = (unsigned int*) image.bits();
     for (int i = 0; i < seam.size(); i++){
@@ -109,7 +108,7 @@ void SeamCarving::removeSeamV(){
         {
             pixs[seam[i]+i*image.width()]=pixs[seam[i]+x+i*image.width()];
         }
-        qDebug()<<seam[i];
+        //qDebug()<<seam[i];
     }
     image = image.copy(0,0,image.width()-1,image.height());
 }

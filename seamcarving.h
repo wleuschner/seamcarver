@@ -4,12 +4,12 @@
 #include <vector>
 #include <QImage>
 
+
 class SeamCarving
 {
 public:
     SeamCarving(QImage& image);
     void removeSeamV();
-
     QImage getGX();
     QImage getGY();
 

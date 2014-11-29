@@ -4,6 +4,7 @@
 #include <QDebug>
 #include "seamcarving.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -36,10 +37,18 @@ void MainWindow::openAction(){
 void MainWindow::removeSeamAction()
 {
     SeamCarving sc(image);
-    sc.removeSeam();
+    sc.removeSeamV();
     ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event){
+    SeamCarving sc(image);
+    int delta = event->oldSize().width()- event->size().width();
+    if (delta > 0){
+        for (int i = 0; i < delta; i++){
+            sc.removeSeamV();
+        }
+    }
+
 
 }
