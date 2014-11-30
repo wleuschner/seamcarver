@@ -13,6 +13,7 @@ class DrawWidget : public QWidget
 public:
     explicit DrawWidget(QWidget *parent = 0);
     void setBackgroundImage(QImage image);
+    QImage* getImage();
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

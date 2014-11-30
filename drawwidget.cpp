@@ -62,6 +62,9 @@ void DrawWidget::drawLineTo(const QPoint &endPoint)
                                      .adjusted(-rad, -rad, +rad, +rad));
     lastPoint = endPoint;
 }
+QImage* DrawWidget::getImage(){
+    return &image;
+}
 
 void DrawWidget::resizeEvent(QResizeEvent *event)
  {

@@ -9,13 +9,27 @@ SeamCarving::SeamCarving(QImage& img, EnergyFunctionI* en):image(img)
     width=img.width();
     height=img.height();
     energy = en;
+    mask = NULL;
 }
 
 
 
 int SeamCarving::getEnergy(int x, int y){
-   return energy->calculateEnergy(x,y);
+    if(mask != NULL){
+        if(mask->pixel(x,y) == qRgb(0,0,0)){
+            return energy->calculateEnergy(x,y);
+        } else {
+            return 0;
+        }
+    } else {
+        return energy->calculateEnergy(x,y);
+    }
 }
+
+void SeamCarving::setMask(QImage *I){
+    mask = I;
+}
+
 void SeamCarving::findSeamH(){
     long long* M =(long long*) malloc(sizeof(long long)*width*height);
     for(int x = 0; x < width; x++){
@@ -76,7 +90,7 @@ void SeamCarving::findSeamH(){
         int end = 2;
         if(y == 0){ //depends on k
             start = 0;
-        }else if(y == width-1){ //depends on k
+        }else if(y == height-1){ //depends on k
             end = 1;
         }
         for(int i = start; i < end; i++){
@@ -190,6 +204,9 @@ void SeamCarving::saveEnergyDist(long long* M){
 void SeamCarving::removeSeamH(){
     findSeamH();
     unsigned int* pixs = (unsigned int*)const_cast<unsigned char*>(image.bits());
+    unsigned int* mask_pixs = NULL;
+    if(mask != NULL)
+        mask_pixs = (unsigned int*)const_cast<unsigned char*>(mask->bits());
     for (int i = 0; i < seam.size(); i++){
         //move array to remove pixel
         //pixs[i+seam[i]*image.width()] = (unsigned int) qRgb(255,0,0);
@@ -197,6 +214,8 @@ void SeamCarving::removeSeamH(){
         for(int y=seam[i];y<height-1;y++)
         {
             pixs[i+y*image.width()]=pixs[i+(y+1)*image.width()];
+            if(mask != NULL)
+                mask_pixs[i+y*mask->width()]=mask_pixs[i+(y+1)*mask->width()];
         }
     }
     height--;
@@ -205,6 +224,9 @@ void SeamCarving::removeSeamH(){
 void SeamCarving::removeSeamV(){
     findSeamV();
     unsigned int* pixs = (unsigned int*)const_cast<unsigned char*>(image.bits());
+    unsigned int* mask_pixs = NULL;
+    if(mask != NULL)
+        mask_pixs = (unsigned int*)const_cast<unsigned char*>(mask->bits());
     for (int i = 0; i < seam.size(); i++){
         //qDebug()<<seam[i];
         //pixs[seam[i]+i*image.width()] = (unsigned int) qRgb(255,0,0);
@@ -213,6 +235,8 @@ void SeamCarving::removeSeamV(){
         for(int x=seam[i];x<width-1;x++)
         {
             pixs[x+i*image.width()]=pixs[x+1+i*image.width()];
+            if(mask != NULL)
+                mask_pixs[x+i*mask->width()]=mask_pixs[x+1+i*mask->width()];
         }
         //qDebug()<<seam[i];
     }

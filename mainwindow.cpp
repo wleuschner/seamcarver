@@ -41,6 +41,7 @@ void MainWindow::openAction(){
         drawArea->setBackgroundImage(image);
         grad = new GradientEnergy(image);
         sc = new SeamCarving(image, grad);
+        sc->setMask(drawArea->getImage());
         qDebug() << "Path: " << fd.selectedFiles()[0];
         this->resize(image.size());
         drawArea->setBackgroundImage(sc->getImage());
@@ -91,7 +92,7 @@ void MainWindow::resizeEvent(QResizeEvent *event){
         drawArea->update();
         //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
         QImage temp = grad->getGX();
-        emit sendEnergyDest(temp);
+        emit sendEnergyDest(*(drawArea->getImage()));
     }
     event->accept();
 }

@@ -13,6 +13,7 @@ public:
     void removeSeamH();
     void findSeamV();
     void findSeamH();
+    void setMask(QImage* I);
     QImage getImage();
 
     QImage energyDist;
@@ -23,6 +24,7 @@ private:
     QImage& image;
     std::vector<int> seam;
 
+    QImage* mask;
     EnergyFunctionI* energy;
     int width;
     int height;
