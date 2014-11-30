@@ -9,6 +9,7 @@ GradientEnergy::GradientEnergy(QImage& I):image(I)
 GradientEnergy::~GradientEnergy(){
 }
 
+
 int GradientEnergy::calculateEnergy(int x, int y){
     int g1 = qRed(Gx.pixel(x,y));
     int g2 = qRed(Gy.pixel(x,y));
