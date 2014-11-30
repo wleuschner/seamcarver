@@ -16,7 +16,7 @@ SeamCarving::SeamCarving(QImage& img, EnergyFunctionI* en):image(img)
 
 int SeamCarving::getEnergy(int x, int y){
     if(mask != NULL){
-        if(mask->pixel(x,y) == qRgb(0,0,0)){
+        if(mask->pixel(x,y) == qRgba(0,0,0,0)){
             return energy->calculateEnergy(x,y);
         } else {
             return 0;
