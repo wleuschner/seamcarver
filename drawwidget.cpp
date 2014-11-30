@@ -14,7 +14,7 @@ DrawWidget::DrawWidget(QWidget *parent) :
 
 void DrawWidget::setBackgroundImage(QImage image)
 {
-    this->image=image;
+    this->background=image;
 }
 
 void DrawWidget::mousePressEvent(QMouseEvent *event)
@@ -42,7 +42,9 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
 void DrawWidget::paintEvent(QPaintEvent *event){
     QPainter painter(this);
     const QRect dirtyRect = event->rect();
-    painter.drawImage(dirtyRect.topLeft(), background,dirtyRect);
+    painter.setOpacity(1.0);
+    painter.drawImage(dirtyRect.topLeft(), background, dirtyRect);
+    painter.setOpacity(0.5);
     painter.drawImage(dirtyRect.topLeft(), image, dirtyRect);
 }
 
