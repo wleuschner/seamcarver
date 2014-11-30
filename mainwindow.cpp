@@ -54,7 +54,7 @@ void MainWindow::saveAsAction()
 
 void MainWindow::removeSeamAction()
 {
-    sc->removeSeamV();
+    sc->removeSeamH();
     emit sendEnergyDest(sc->energyDist);
     ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
 }
@@ -69,14 +69,14 @@ void MainWindow::resizeEvent(QResizeEvent *event){
                 std::clock_t t = std::clock();
                 sc->removeSeamV();
                 t = std::clock() - t;
-                qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
+                //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
             }
         }
 
         //image = sc->getImage();
         ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
-
-        emit sendEnergyDest(sc->energyDist);
+        QImage temp = grad->getGX();
+        emit sendEnergyDest(temp);
     }
     event->accept();
 }

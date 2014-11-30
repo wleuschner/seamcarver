@@ -1,9 +1,14 @@
 #include "gradientenergy.h"
 #include <cmath>
+#include <QDebug>
 
 GradientEnergy::GradientEnergy(QImage& I):image(I)
 {
     greyTones();
+    calculateGradients();
+    changes = 0;
+    width = image.width();
+    height = image.height();
 }
 
 GradientEnergy::~GradientEnergy(){
@@ -16,8 +21,45 @@ int GradientEnergy::calculateEnergy(int x, int y){
     return abs(g1-128)+abs(g2-128);
 }
 
-void GradientEnergy::update(){
-    calculateGradients();
+void GradientEnergy::updateH(std::vector<int> seam){
+    unsigned int* pixs = (unsigned int*)const_cast<unsigned char*>(grey.bits());
+    for (int i = 0; i < seam.size(); i++){
+        //move array to remove pixel
+        //TODO
+        for(int y=seam[i];y<height-1;y++)
+        {
+            pixs[i+y*grey.width()]=pixs[i+(y+1)*grey.width()];
+        }
+    }
+    if(changes >= 2){
+        //std::clock_t t = std::clock();
+        calculateGradients();
+        //t = std::clock() - t;
+        //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
+        changes = 0;
+    }
+    changes++;
+    height--;
+}
+
+void GradientEnergy::updateV(std::vector<int> seam){
+    unsigned int* pixs = (unsigned int*)const_cast<unsigned char*>(grey.bits());
+    for (int i = 0; i < seam.size(); i++){
+        //move array to remove pixel
+        for(int x=seam[i];x<width-1;x++)
+        {
+            pixs[x+i*grey.width()]=pixs[x+1+i*grey.width()];
+        }
+    }
+    if(changes >= 2){
+        //std::clock_t t = std::clock();
+        calculateGradients();
+        //t = std::clock() - t;
+        //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
+        changes = 0;
+    }
+    changes++;
+    width--;
 }
 
 QImage GradientEnergy::getGX(){
@@ -160,13 +202,13 @@ QImage GradientEnergy::conv(double* mat){
     return conv_img;
 }
 void GradientEnergy::calculateGradients(){
-    double dx[] =  {-1, 0,1,
+    double dx[] =  {0, 0,0,
                     -1, 0,1,
-                    -1, 0,1};
+                    0, 0,0};
 
-    double dy[] =  {-1,-1,-1,
+    double dy[] =  {0,-1,0,
                      0, 0, 0,
-                     1, 1, 1};
+                     0, 1, 0};
 
     //Gx = QImage(image.width(),image.height(),QImage::Format_ARGB32);
     //Gy = QImage(image.width(),image.height(),QImage::Format_ARGB32);
