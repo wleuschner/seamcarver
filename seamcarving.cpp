@@ -4,31 +4,21 @@
 #include <cmath>
 #include <ctime>
 
-SeamCarving::SeamCarving(QImage& img):image(img)
+SeamCarving::SeamCarving(QImage& img, EnergyFunctionI* en):image(img)
 {
     width=img.width();
     height=img.height();
+    energy = en;
 }
 
-QImage SeamCarving::getGX()
-{
-    return Gx;
-}
 
-QImage SeamCarving::getGY()
-{
-    return Gy;
-}
 
 int SeamCarving::getEnergy(int x, int y){
-    int g1 = qRed(Gx.pixel(x,y));
-    int g2 = qRed(Gy.pixel(x,y));
-
-    return abs(g1-128)+abs(g2-128);
+   return energy->calculateEnergy(x,y);
 }
 
 void SeamCarving::findSeamV(){
-    calculateGradients();
+    energy->update();
     long long* M =(long long*) malloc(sizeof(long long)*width*height);
     for (int y = 0; y < height; y++){
         for(int x = 0; x < width; x++){
@@ -150,6 +140,16 @@ QImage SeamCarving::getImage()
 
 
 //delete below here after
+
+QImage SeamCarving::getGX()
+{
+    return Gx;
+}
+
+QImage SeamCarving::getGY()
+{
+    return Gy;
+}
 
 void SeamCarving::calculateGradients(){
     static double dx[] =  {-1, 0,1,

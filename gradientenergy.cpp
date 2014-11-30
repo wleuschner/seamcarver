@@ -1,10 +1,14 @@
 #include "gradientenergy.h"
+#include <cmath>
 
-GradientEnergy::GradientEnergy(QImage& I)
+GradientEnergy::GradientEnergy(QImage& I):image(I)
 {
-    image = I;
     greyTones();
 }
+GradientEnergy::~GradientEnergy(){
+    free(grey);
+}
+
 int GradientEnergy::calculateEnergy(int x, int y){
     int g1 = qRed(Gx.pixel(x,y));
     int g2 = qRed(Gy.pixel(x,y));
@@ -23,18 +27,19 @@ QImage GradientEnergy::getGY(){
     return Gy;
 }
 QImage GradientEnergy::getEnergyPlot(){
-    QImage plot = QImage(image.width(),image.height(),QImage::Format_Mono);
-    unsigned char* pixs = malloc(sizeof(unsigned char)*image.height()*image.width());
+    //QImage plot = QImage(image.width(),image.height(),QImage::Format_Mono);
+    unsigned char* pixs = (unsigned char*) malloc(sizeof(unsigned char)*image.height()*image.width());
     int temp = 0;
     for (int y = 0; y < image.height(); y++){
         for (int x = 0; x < image.width(); x++){
-            temp = calculateEnergy() / 510;
-            pixs[y*image.width()+x] = (unsigned char) e;
+            temp = calculateEnergy(x,y) / 510;
+            pixs[y*image.width()+x] = (unsigned char) temp;
         }
     }
+    return QImage(pixs,image.width(),image.height(),QImage::Format_Mono);
 }
 
-void GradientEnergy::greyTones(const QImage& image){
+void GradientEnergy::greyTones(){
     grey = (unsigned char*)malloc(sizeof(unsigned char)*image.width()*image.height());
     const unsigned int* src=(unsigned int*)image.bits();
     for(int y=0;y<image.height();y++)
@@ -46,15 +51,14 @@ void GradientEnergy::greyTones(const QImage& image){
             unsigned int g=qGreen(c);
             unsigned int b=qBlue(c);
             unsigned int gs=(0.299f*r+0.587f*g+0.114f*b);
-            dst[x+y*image.width()] = (unsigned char) gs
+            grey[x+y*image.width()] = (unsigned char) gs;
         }
     }
-    //QImage grey_image((unsigned char*)dst,image.width(),image.height(),QImage::Format_ARGB32);
-    return grey_image;
 }
-QImage GradientEnergy::conv(const QImage& image,double* mat){
-    src = grey;
-    unsigned char* dst = (unsigned int*)malloc(sizeof(unsigned char)*image.width()*image.height());
+
+QImage GradientEnergy::conv(double* mat){
+    unsigned char* src = grey;
+    unsigned char* dst = (unsigned char*)malloc(sizeof(unsigned char)*image.width()*image.height());
     int width = image.width();
     int height = image.height();
     for(int y=0;y<image.height();y++)
@@ -145,7 +149,7 @@ QImage GradientEnergy::conv(const QImage& image,double* mat){
             {
                 color = 0;
             }
-            dst[x+y*image.width()]= color //qRgb(color,color,color);
+            dst[x+y*image.width()]= color;
         }
     }
 
@@ -163,6 +167,6 @@ void GradientEnergy::calculateGradients(){
 
     //Gx = QImage(image.width(),image.height(),QImage::Format_ARGB32);
     //Gy = QImage(image.width(),image.height(),QImage::Format_ARGB32);
-    Gx = conv(greyTones(image),dx);
-    Gy = conv(greyTones(image),dy);
+    Gx = conv(dx);
+    Gy = conv(dy);
 }

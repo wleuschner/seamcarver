@@ -1,21 +1,21 @@
 #ifndef GRADIENTENERGY_H
 #define GRADIENTENERGY_H
-#include "energyfunctioni.h";
+#include "energyfunctioni.h"
 #include <QImage>
 class GradientEnergy : public EnergyFunctionI
 {
 public:
     GradientEnergy(QImage& I);
-    int calculateEnergy(int x, int y);
-    void update();
+    virtual int calculateEnergy(int x, int y);
+    virtual void update();
     QImage getGX();
     QImage getGY();
     QImage getEnergyPlot();
     ~GradientEnergy();
 
 private:
-    void greyTones(const QImage& image);
-    QImage conv(const QImage& image,double* mat);
+    void greyTones();
+    QImage conv(double* mat);
     void calculateGradients();
 
 private:

@@ -29,4 +29,4 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     energydistview.ui
 
-QMAKE_CXXFLAGS_RELEASE -= -O3
+QMAKE_CXXFLAGS_RELEASE += -O3

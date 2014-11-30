@@ -4,9 +4,9 @@
 class EnergyFunctionI
 {
 public:
-    EnergyFunctionI(QImage *image);
-    virtual int calculateEnergy(int x, int y);
-    virtual void update();
+    //EnergyFunctionI();
+    virtual int calculateEnergy(int x, int y)=0;
+    virtual void update()=0;
 };
 
 #endif // ENERGYFUNCTIONI_H
