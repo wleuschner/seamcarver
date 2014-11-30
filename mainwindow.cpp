@@ -38,8 +38,8 @@ void MainWindow::openAction(){
     fd.setFileMode(QFileDialog::ExistingFile);
     if(fd.exec()){
         image = QImage(fd.selectedFiles()[0]);
-        GradientEnergy grad(image);
-        sc = new SeamCarving(image, &grad);
+        grad = new GradientEnergy(image);
+        sc = new SeamCarving(image, grad);
         qDebug() << "Path: " << fd.selectedFiles()[0];
         this->resize(image.size());
         ui->ImageViewer->setPixmap(QPixmap::fromImage(image));

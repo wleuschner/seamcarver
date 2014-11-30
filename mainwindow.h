@@ -7,6 +7,7 @@
 #include <QResizeEvent>
 #include "seamcarving.h"
 #include "energydistview.h"
+#include "gradientenergy.h"
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +37,7 @@ private:
 
     Ui::MainWindow *ui;
     DrawWidget *drawArea;
+    GradientEnergy* grad;
 
     QImage image;
 };

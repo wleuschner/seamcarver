@@ -20,7 +20,7 @@ private:
 
 private:
     QImage& image;
-    unsigned char* grey;
+    QImage grey;
     QImage Gx;
     QImage Gy;
 };

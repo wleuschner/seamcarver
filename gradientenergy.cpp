@@ -5,8 +5,8 @@ GradientEnergy::GradientEnergy(QImage& I):image(I)
 {
     greyTones();
 }
+
 GradientEnergy::~GradientEnergy(){
-    free(grey);
 }
 
 int GradientEnergy::calculateEnergy(int x, int y){
@@ -40,30 +40,33 @@ QImage GradientEnergy::getEnergyPlot(){
 }
 
 void GradientEnergy::greyTones(){
-    grey = (unsigned char*)malloc(sizeof(unsigned char)*image.width()*image.height());
-    const unsigned int* src=(unsigned int*)image.bits();
-    for(int y=0;y<image.height();y++)
+    int width = image.width();
+    int height = image.height();
+    unsigned int* dst=(unsigned int*)malloc(sizeof(unsigned int)*width*height);
+    const unsigned int* src=(const unsigned int*)image.bits();
+    for(int y=0;y<height;y++)
     {
-        for(int x=0;x<image.width();x++)
+        for(int x=0;x<width;x++)
         {
             unsigned int c=src[x+y*image.width()];
             unsigned int r=qRed(c);
             unsigned int g=qGreen(c);
             unsigned int b=qBlue(c);
             unsigned int gs=(0.299f*r+0.587f*g+0.114f*b);
-            grey[x+y*image.width()] = (unsigned char) gs;
+            dst[x+y*width]=qRgba(gs,gs,gs,255);
         }
     }
+    grey = QImage((unsigned char*)dst,width,height,QImage::Format_ARGB32);
 }
 
 QImage GradientEnergy::conv(double* mat){
-    unsigned char* src = grey;
-    unsigned char* dst = (unsigned char*)malloc(sizeof(unsigned char)*image.width()*image.height());
-    int width = image.width();
-    int height = image.height();
-    for(int y=0;y<image.height();y++)
+    int width = grey.width();
+    int height = grey.height();
+    const unsigned int* src = (const unsigned int*)grey.bits();
+    unsigned int* dst = (unsigned int*)malloc(sizeof(unsigned int)*width*height);
+    for(int y=0;y<height;y++)
     {
-        for(int x=0;x<image.width();x++)
+        for(int x=0;x<width;x++)
         {
             int color=0;
             //Convolute repair 180 degree
@@ -74,36 +77,36 @@ QImage GradientEnergy::conv(double* mat){
                     int c=0;
                     if((cx+x>=0 && cy+y>=0) && (cx+x<width && cy+y<height))
                     {
-                        c = round(src[(x+cx)+(y+cy)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                        c = round(qRed(src[(x+cx)+(y+cy)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                     }
                     else if(cx+x<0)
                     {
                         if(cy+y<0)
                         {
-                            c = round(src[(0)+(0)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(0)+(0)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else if(cy+y>=height)
                         {
-                            c = round(src[(0)+(height-1)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(0)+(height-1)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else
                         {
-                            c = round(src[(0)+(y+cy)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(0)+(y+cy)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                     }
                     else if(cx+x>=width)
                     {
                         if(cy+y<0)
                         {
-                            c = round(src[(width-1)+(0)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(width-1)+(0)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else if(cy+y>=height)
                         {
-                            c = round(src[(width-1)+(height-1)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(width-1)+(height-1)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else
                         {
-                            c = round(src[(width-1)+(y+cy)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(width-1)+(y+cy)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
 
                     }
@@ -111,30 +114,30 @@ QImage GradientEnergy::conv(double* mat){
                     {
                         if(cx+x<0)
                         {
-                            c = round(src[(0)+(0)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(0)+(0)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else if(cx+x>=width)
                         {
-                            c = round(src[(width-1)+(0)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(width-1)+(0)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else
                         {
-                            c = round(src[(cx+x)+(0)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(cx+x)+(0)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                     }
                     else if(cy+y>height)
                     {
                         if(cx+x<0)
                         {
-                            c = round(src[(0)+(height-1)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(0)+(height-1)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else if(cx+x>=width)
                         {
-                            c = round(src[(width-1)+(height-1)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(width-1)+(height-1)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                         else
                         {
-                            c = round(src[(width)+(height-1)*image.width()]*mat[(2-(cx+1))+((2-(cy+1))*3)]);
+                            c = round(qRed(src[(width)+(height-1)*image.width()])*mat[(2-(cx+1))+((2-(cy+1))*3)]);
                         }
                     }
                     color+=c;
@@ -149,11 +152,11 @@ QImage GradientEnergy::conv(double* mat){
             {
                 color = 0;
             }
-            dst[x+y*image.width()]= color;
+            dst[x+y*width]=qRgb(color,color,color);
         }
     }
 
-    QImage conv_img((unsigned char*)dst,width,height,QImage::Format_Mono);
+    QImage conv_img((unsigned char*)dst,width,height,QImage::Format_ARGB32);
     return conv_img;
 }
 void GradientEnergy::calculateGradients(){
