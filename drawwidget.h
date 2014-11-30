@@ -12,6 +12,7 @@ class DrawWidget : public QWidget
     Q_OBJECT
 public:
     explicit DrawWidget(QWidget *parent = 0);
+    void setBackgroundImage(QImage image);
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -30,6 +31,7 @@ private:
     bool scribbling;
     int penWidth;
     QImage image;
+    QImage background;
     QPoint lastPoint;
     QColor color;
 };

@@ -12,9 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //drawArea= new DrawWidget(this);
+    drawArea = new DrawWidget(this);
 
-    //this->setCentralWidget(drawArea);
+    this->setCentralWidget(drawArea);
     this->unifiedTitleAndToolBarOnMac();
     ui->menuBar->setNativeMenuBar(false);
 
@@ -38,11 +38,13 @@ void MainWindow::openAction(){
     fd.setFileMode(QFileDialog::ExistingFile);
     if(fd.exec()){
         image = QImage(fd.selectedFiles()[0]);
+        drawArea->setBackgroundImage(image);
         grad = new GradientEnergy(image);
         sc = new SeamCarving(image, grad);
         qDebug() << "Path: " << fd.selectedFiles()[0];
         this->resize(image.size());
-        ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
+        drawArea->setBackgroundImage(sc->getImage());
+        //ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
         //emit sendEnergyDest(sc.energyDist);
     }
 }
@@ -56,13 +58,17 @@ void MainWindow::removeSeamAction()
 {
     sc->removeSeamH();
     emit sendEnergyDest(sc->energyDist);
-    ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
+    drawArea->resize(drawArea->size().width(),drawArea->size().height()-1);
+    drawArea->setBackgroundImage(sc->getImage());
+    drawArea->update();
+    //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event){
     if(sc!=0)
     {
-        int deltaWidth = event->oldSize().width()- event->size().width();
+        int deltaWidth = event->oldSize().width() - event->size().width();
+        int deltaHeight = event->oldSize().height() - event->size().height();
         qDebug()<<"Delta: "<<deltaWidth;
         if (deltaWidth > 0){
             for (int i = 0; i < deltaWidth; i++){
@@ -73,8 +79,17 @@ void MainWindow::resizeEvent(QResizeEvent *event){
             }
         }
 
-        //image = sc->getImage();
-        ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
+        if(deltaHeight>0)
+        {
+            for(int i = 0; i < deltaHeight; i++)
+            {
+                sc->removeSeamH();
+            }
+        }
+
+        drawArea->setBackgroundImage(sc->getImage());
+        drawArea->update();
+        //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
         QImage temp = grad->getGX();
         emit sendEnergyDest(temp);
     }

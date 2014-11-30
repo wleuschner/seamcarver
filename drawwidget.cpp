@@ -8,8 +8,13 @@ DrawWidget::DrawWidget(QWidget *parent) :
     setAttribute(Qt::WA_StaticContents);
     modified = false;
     scribbling = false;
-    penWidth = 2;
-    color = qRgba(0,0,0,10);
+    penWidth = 10;
+    color = qRgba(255,255,0,0);
+}
+
+void DrawWidget::setBackgroundImage(QImage image)
+{
+    this->image=image;
 }
 
 void DrawWidget::mousePressEvent(QMouseEvent *event)
@@ -37,6 +42,7 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
 void DrawWidget::paintEvent(QPaintEvent *event){
     QPainter painter(this);
     const QRect dirtyRect = event->rect();
+    painter.drawImage(dirtyRect.topLeft(), background,dirtyRect);
     painter.drawImage(dirtyRect.topLeft(), image, dirtyRect);
 }
 
