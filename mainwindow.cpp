@@ -4,6 +4,9 @@
 #include <QDebug>
 #include "seamcarving.h"
 #include "gradientenergy.h"
+#include <cmath>
+#include <vector>
+#include <algorithm>
 #include <ctime>
 
 
@@ -43,7 +46,7 @@ void MainWindow::openAction(){
         sc = new SeamCarving(image, grad);
         sc->setMask(drawArea->getImage());
         qDebug() << "Path: " << fd.selectedFiles()[0];
-        this->resize(image.size());
+        this->resize(image.size().width(),image.size().height()+30);
         drawArea->setBackgroundImage(sc->getImage());
         //ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
         //emit sendEnergyDest(sc.energyDist);
@@ -68,8 +71,8 @@ void MainWindow::removeSeamAction()
 void MainWindow::resizeEvent(QResizeEvent *event){
     if(sc!=0)
     {
-        int deltaWidth = event->oldSize().width() - event->size().width();
-        int deltaHeight = event->oldSize().height() - event->size().height();
+        int deltaWidth = sc->width - event->size().width();
+        int deltaHeight = sc->height - event->size().height();
         qDebug()<<"Delta: "<<deltaWidth;
         if (deltaWidth > 0){
             for (int i = 0; i < deltaWidth; i++){
@@ -78,6 +81,31 @@ void MainWindow::resizeEvent(QResizeEvent *event){
                 t = std::clock() - t;
                 //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
             }
+        }
+
+        if(deltaWidth < 0){
+            //find seams delta times
+            std::vector< std::vector<int> > remove_seams(abs(deltaWidth));
+            for (int i = 0; i < abs(deltaWidth); i++){
+                sc->findSeamV();
+                remove_seams[i] = sc->getSeam();
+            }
+            //order seams
+            std::vector< std::vector<int> > ordered_seams(image.height());
+            for(int y = 0; y < image.height(); y++){
+                std::vector<int> row(abs(deltaWidth));
+                for (int i = 0; i < abs(deltaWidth); i++){
+                row[i] = remove_seams[y][i]
+                }
+                std::sort(row.begin(),row.end());
+            }
+            //insert seams
+            image.copy(0,0,image.width()-deltaWidth,image.height());
+            for (int i = ordered_seams.size(); i >= 0; i--){
+                sc->insertSeam(ordered_seams[i], i);
+            }
+            //energyfunction reset grey image
+            grad->greyTones();
         }
 
         if(deltaHeight>0)

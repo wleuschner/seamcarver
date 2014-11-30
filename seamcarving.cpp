@@ -12,7 +12,12 @@ SeamCarving::SeamCarving(QImage& img, EnergyFunctionI* en):image(img)
     mask = NULL;
 }
 
+std::vector<int> SeamCarving::getSeam(){
+    return seam;
+}
+void SeamCarving::insertSeam(std::vector<int> xcord, int y){
 
+}
 
 int SeamCarving::getEnergy(int x, int y){
     if(mask != NULL){

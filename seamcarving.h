@@ -14,9 +14,13 @@ public:
     void findSeamV();
     void findSeamH();
     void setMask(QImage* I);
+    void insertSeam(std::vector<int> xcord, int y);
     QImage getImage();
+    std::vector<int> getSeam();
 
     QImage energyDist;
+    int width;
+    int height;
 
 private:
     void saveEnergyDist(long long* M);
@@ -26,8 +30,7 @@ private:
 
     QImage* mask;
     EnergyFunctionI* energy;
-    int width;
-    int height;
+
 };
 
 #endif // SEAMCARVING_H

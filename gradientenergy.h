@@ -11,13 +11,13 @@ public:
     virtual int calculateEnergy(int x, int y);
     virtual void updateV(std::vector<int> seam);
     virtual void updateH(std::vector<int> seam);
+    void greyTones();
     QImage getGX();
     QImage getGY();
     QImage getEnergyPlot();
     ~GradientEnergy();
 
 private:
-    void greyTones();
     QImage conv(double* mat);
     void calculateGradients();
 
