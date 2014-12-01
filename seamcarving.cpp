@@ -31,7 +31,7 @@ int SeamCarving::getEnergy(int x, int y){
         if(mask->pixel(x,y) == qRgba(0,0,0,0)){
             return energy->calculateEnergy(x,y);
         } else {
-            return 0;
+            return -100;
         }
     } else {
         return energy->calculateEnergy(x,y);

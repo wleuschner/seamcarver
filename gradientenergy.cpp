@@ -51,14 +51,15 @@ void GradientEnergy::updateV(std::vector<int> seam){
             pixs[x+i*grey.width()]=pixs[x+1+i*grey.width()];
         }
     }
-    if(changes >= 2){
+    /*if(changes >= 2){
         //std::clock_t t = std::clock();
         calculateGradients();
         //t = std::clock() - t;
         //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
         changes = 0;
     }
-    changes++;
+    changes++;*/
+    calculateGradients();
     width--;
 }
 
@@ -70,12 +71,12 @@ QImage GradientEnergy::getGY(){
 }
 QImage GradientEnergy::getEnergyPlot(){
     //QImage plot = QImage(image.width(),image.height(),QImage::Format_Mono);
-    unsigned int* pixs = (unsigned int*) malloc(sizeof(unsigned int)*image.height()*image.width());
+    unsigned int* pixs = (unsigned int*) malloc(sizeof(unsigned int)*height*width);
     float temp = 0;
-    for (int y = 0; y < image.height(); y++){
-        for (int x = 0; x < image.width(); x++){
+    for (int y = 0; y < height; y++){
+        for (int x = 0; x < width; x++){
             temp = calculateEnergy(x,y);
-            pixs[y*image.width()+x] = qRgb(temp,temp,temp);
+            pixs[y*width+x] = qRgb(temp,temp,temp);
         }
     }
     return QImage((unsigned char*)pixs,width,height,QImage::Format_ARGB32);

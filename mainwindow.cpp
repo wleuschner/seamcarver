@@ -127,7 +127,7 @@ void MainWindow::resizeEvent(QResizeEvent *event){
         drawArea->update();
         //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
         QImage temp = grad->getGX();
-        emit sendEnergyDest(*(drawArea->getImage()));
+        emit sendEnergyDest(sc->energyDist);
         QImage eplot = grad->getEnergyPlot();
         emit sendEnergy(eplot);
     }
