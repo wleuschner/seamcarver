@@ -31,6 +31,7 @@ private slots:
     void openAction();
     void saveAsAction();
     void removeSeamAction();
+    void resetMask();
 
 private:
     SeamCarving* sc;

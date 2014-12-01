@@ -15,6 +15,7 @@ public:
     void findSeamH();
     void setMask(QImage* I);
     void insertSeam(std::vector<int> xcord, int y);
+    void clearMask();
     QImage getImage();
     std::vector<int> getSeam();
 

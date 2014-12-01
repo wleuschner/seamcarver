@@ -9,16 +9,27 @@ GradientEnergy::GradientEnergy(QImage& I):image(I)
     changes = 0;
     width = image.width();
     height = image.height();
+    mode = FAST;
+    useBlur = false;
+    blurfactor = 1;
 }
 
 GradientEnergy::~GradientEnergy(){
+
+}
+
+void GradientEnergy::setKernel(kernel k){
+    mode = k;
 }
 
 int GradientEnergy::calculateEnergy(int x, int y){
     int g1 = qRed(Gx.pixel(x,y));
     int g2 = qRed(Gy.pixel(x,y));
-
-    return abs(g1-128)+abs(g2-128);
+    if(mode != LAPLACE){
+        return abs(g1-128)+abs(g2-128);
+    }else{
+        return abs(g1)+abs(g1);
+        }
 }
 
 void GradientEnergy::updateH(std::vector<int> seam){
@@ -100,9 +111,18 @@ void GradientEnergy::greyTones(){
         }
     }
     grey = QImage((unsigned char*)dst,width,height,QImage::Format_ARGB32);
+    double gauss[] =
+          {0.0625, 0.125, 0.0625,
+          0.125, 0.25, 0.125,
+           0.0625, 0.125, 0.0625};
+    if(useBlur){
+        for (int i = 0; i < blurfactor; i++){
+            grey = conv(gauss,false);
+        }
+    }
 }
 
-QImage GradientEnergy::conv(double* mat){
+QImage GradientEnergy::conv(double* mat, bool sum){
     int width = grey.width();
     int height = grey.height();
     const unsigned int* src = (const unsigned int*)grey.bits();
@@ -186,7 +206,8 @@ QImage GradientEnergy::conv(double* mat){
                     color+=c;
                 }
             }
-            color+=128;
+            if (sum)
+                color+=128;
             if(color>255)
             {
                 color=255;
@@ -203,16 +224,45 @@ QImage GradientEnergy::conv(double* mat){
     return conv_img;
 }
 void GradientEnergy::calculateGradients(){
-    double dx[] =  {0, 0,0,
-                    -1, 0,1,
-                    0, 0,0};
+    double dx[9];
+    double dy[9];
+    if(mode == FAST){
+        double dx_n[] =  {0, 0, 0,
+              -1, 0, 1,
+               0, 0, 0};
 
-    double dy[] =  {0,-1,0,
-                     0, 0, 0,
-                     0, 1, 0};
+        double dy_n[] =  {0,-1, 0,
+               0, 0, 0,
+               0, 1, 0};
+        std::copy(dx_n,dx_n+9,dx);
+        std::copy(dy_n,dy_n+9,dy);
+    } else if(mode == PREWITT){
+        double dx_n[] =  {-1, 0, 1,
+               -1, 0, 1,
+               -1, 0, 1};
 
-    //Gx = QImage(image.width(),image.height(),QImage::Format_ARGB32);
-    //Gy = QImage(image.width(),image.height(),QImage::Format_ARGB32);
-    Gx = conv(dx);
-    Gy = conv(dy);
+        double dy_n[] = {-1,-1, -1,
+               0, 0, 0,
+               1, 1, 1};
+        std::copy(dx_n,dx_n+9,dx);
+        std::copy(dy_n,dy_n+9,dy);
+    } else if(mode == SOBEL){
+        double dx_n[] =  {-1, 0, 1,
+               -2, 0, 2,
+               -1, 0, 1};
+
+        double dy_n[] = {-1,-2, -1,
+               0, 0, 0,
+               1, 2, 1};
+        std::copy(dx_n,dx_n+9,dx);
+        std::copy(dy_n,dy_n+9,dy);
+    } else if(mode == LAPLACE) {
+        double dx_n[] =  { 1, 1, 1,
+                1, -8, 1,
+                1, 1, 1};
+        Gx = conv(dx_n,false);
+        return;
+    }
+    Gx = conv(dx,true);
+    Gy = conv(dy,true);
 }

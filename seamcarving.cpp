@@ -15,6 +15,11 @@ SeamCarving::SeamCarving(QImage& img, EnergyFunctionI* en):image(img)
 std::vector<int> SeamCarving::getSeam(){
     return seam;
 }
+
+void SeamCarving::clearMask(){
+    this->mask->fill(qRgba(0,0,0,0));
+}
+
 void SeamCarving::insertSeam(std::vector<int> xcord, int y){
     unsigned int* pixs = (unsigned int*) const_cast<unsigned char*> (image.bits());
     for(int j = xcord.size()-1; j >=0; j--){

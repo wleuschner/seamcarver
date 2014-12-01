@@ -4,6 +4,8 @@
 #include <QImage>
 #include <vector>
 
+enum kernel{FAST, PREWITT, SOBEL, LAPLACE};
+
 class GradientEnergy : public EnergyFunctionI
 {
 public:
@@ -12,13 +14,14 @@ public:
     virtual void updateV(std::vector<int> seam);
     virtual void updateH(std::vector<int> seam);
     void greyTones();
+    void setKernel(kernel k);
     QImage getGX();
     QImage getGY();
     QImage getEnergyPlot();
     ~GradientEnergy();
 
 private:
-    QImage conv(double* mat);
+    QImage conv(double* mat, bool sum);
     void calculateGradients();
 
 private:
@@ -29,6 +32,9 @@ private:
     QImage grey;
     QImage Gx;
     QImage Gy;
+    kernel mode;
+    bool useBlur;
+    unsigned int blurfactor;
 };
 
 #endif // GRADIENTENERGY_H

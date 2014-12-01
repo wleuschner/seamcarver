@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="cursor">
-   <cursorShape>CrossCursor</cursorShape>
+   <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
    <string>SeamCarving</string>
@@ -20,6 +20,9 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="cursor">
+    <cursorShape>CrossCursor</cursorShape>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
      <number>0</number>
@@ -89,7 +92,7 @@
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -97,6 +100,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionReset_Mask"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -139,6 +143,14 @@
   <action name="actionShow_Energy_Distribution">
    <property name="text">
     <string>Show Energy Distribution</string>
+   </property>
+  </action>
+  <action name="actionReset_Mask">
+   <property name="text">
+    <string>Reset Mask</string>
+   </property>
+   <property name="toolTip">
+    <string>Deletes the current mask</string>
    </property>
   </action>
  </widget>
