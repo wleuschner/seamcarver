@@ -84,6 +84,7 @@ void MainWindow::resizeEvent(QResizeEvent *event){
         }
 
         if(deltaWidth < 0){
+            /*
             //find seams delta times
             std::vector< std::vector<int> > remove_seams(abs(deltaWidth));
             for (int i = 0; i < abs(deltaWidth); i++){
@@ -95,17 +96,19 @@ void MainWindow::resizeEvent(QResizeEvent *event){
             for(int y = 0; y < image.height(); y++){
                 std::vector<int> row(abs(deltaWidth));
                 for (int i = 0; i < abs(deltaWidth); i++){
-                row[i] = remove_seams[y][i]
+                    row[i] = remove_seams[i][y];
                 }
                 std::sort(row.begin(),row.end());
+                ordered_seams[y] = row;
             }
             //insert seams
             image.copy(0,0,image.width()-deltaWidth,image.height());
-            for (int i = ordered_seams.size(); i >= 0; i--){
+            for (int i = 0; i < ordered_seams.size(); i++){
                 sc->insertSeam(ordered_seams[i], i);
             }
             //energyfunction reset grey image
             grad->greyTones();
+            */
         }
 
         if(deltaHeight>0)
