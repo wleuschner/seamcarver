@@ -26,6 +26,7 @@ protected:
 signals:
 
     void sendEnergyDest(QImage &i);
+    void sendEnergy(QImage &i);
 private slots:
     void openAction();
     void saveAsAction();
@@ -34,6 +35,7 @@ private slots:
 private:
     SeamCarving* sc;
     EnergyDistView ed_view;
+    EnergyDistView ed_gradient;
 
     Ui::MainWindow *ui;
     DrawWidget *drawArea;

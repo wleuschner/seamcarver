@@ -70,15 +70,15 @@ QImage GradientEnergy::getGY(){
 }
 QImage GradientEnergy::getEnergyPlot(){
     //QImage plot = QImage(image.width(),image.height(),QImage::Format_Mono);
-    unsigned char* pixs = (unsigned char*) malloc(sizeof(unsigned char)*image.height()*image.width());
-    int temp = 0;
+    unsigned int* pixs = (unsigned int*) malloc(sizeof(unsigned int)*image.height()*image.width());
+    float temp = 0;
     for (int y = 0; y < image.height(); y++){
         for (int x = 0; x < image.width(); x++){
-            temp = calculateEnergy(x,y) / 510;
-            pixs[y*image.width()+x] = (unsigned char) temp;
+            temp = calculateEnergy(x,y);
+            pixs[y*image.width()+x] = qRgb(temp,temp,temp);
         }
     }
-    return QImage(pixs,image.width(),image.height(),QImage::Format_Mono);
+    return QImage((unsigned char*)pixs,width,height,QImage::Format_ARGB32);
 }
 
 void GradientEnergy::greyTones(){

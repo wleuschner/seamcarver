@@ -28,7 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_As,SIGNAL(triggered()), SLOT(saveAsAction()));
     connect(ui->actionRemove_Seam,SIGNAL(triggered()),SLOT(removeSeamAction()));
     connect(ui->actionShow_Energy_Distribution, SIGNAL(triggered()), &ed_view, SLOT(show()));
+    connect(ui->actionShow_Gradients,SIGNAL(triggered()),&ed_gradient,SLOT(show()));
     connect(this, SIGNAL(sendEnergyDest(QImage&)), &ed_view, SLOT(receiveEnergyDist(QImage&)));
+    connect(this, SIGNAL(sendEnergy(QImage&)),&ed_gradient,SLOT(receiveEnergyDist(QImage&)));
 }
 
 MainWindow::~MainWindow()
@@ -62,6 +64,8 @@ void MainWindow::removeSeamAction()
 {
     sc->removeSeamH();
     emit sendEnergyDest(sc->energyDist);
+    QImage eplot = grad->getEnergyPlot();
+    emit sendEnergy(eplot);
     drawArea->resize(drawArea->size().width(),drawArea->size().height()-1);
     drawArea->setBackgroundImage(sc->getImage());
     drawArea->update();
@@ -124,6 +128,8 @@ void MainWindow::resizeEvent(QResizeEvent *event){
         //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
         QImage temp = grad->getGX();
         emit sendEnergyDest(*(drawArea->getImage()));
+        QImage eplot = grad->getEnergyPlot();
+        emit sendEnergy(eplot);
     }
     event->accept();
 }
