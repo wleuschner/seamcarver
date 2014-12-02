@@ -18,11 +18,12 @@ public:
     QImage getGX();
     QImage getGY();
     QImage getEnergyPlot();
+    void calculateGradients();
+
     ~GradientEnergy();
 
 private:
     QImage conv(double* mat, bool sum);
-    void calculateGradients();
 
 private:
     int height;

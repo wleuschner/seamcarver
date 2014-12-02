@@ -5,6 +5,7 @@
 #include <QImage>
 #include "drawwidget.h"
 #include <QResizeEvent>
+#include <QComboBox>
 #include "seamcarving.h"
 #include "energydistview.h"
 #include "gradientenergy.h"
@@ -32,11 +33,14 @@ private slots:
     void saveAsAction();
     void removeSeamAction();
     void resetMask();
+    void selectKernel(int);
 
 private:
     SeamCarving* sc;
     EnergyDistView ed_view;
     EnergyDistView ed_gradient;
+    QComboBox* kernelbox;
+
 
     Ui::MainWindow *ui;
     DrawWidget *drawArea;

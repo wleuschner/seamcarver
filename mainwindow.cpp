@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QDebug>
+#include <QComboBox>
 #include "seamcarving.h"
 #include "gradientenergy.h"
 #include <cmath>
@@ -21,6 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->unifiedTitleAndToolBarOnMac();
     ui->menuBar->setNativeMenuBar(false);
 
+    kernelbox = new QComboBox(this);
+    kernelbox->addItem("Fast");
+    kernelbox->addItem("Prewitt");
+    kernelbox->addItem("Sobel");
+    kernelbox->addItem("La place");
+    ui->mainToolBar->addWidget(kernelbox);
+    kernelbox->setEnabled(false);
 
     sc=0;
 
@@ -30,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionShow_Energy_Distribution, SIGNAL(triggered()), &ed_view, SLOT(show()));
     connect(ui->actionReset_Mask, SIGNAL(triggered()), SLOT(resetMask()));
     connect(ui->actionShow_Gradients,SIGNAL(triggered()),&ed_gradient,SLOT(show()));
+    connect(kernelbox,SIGNAL(currentIndexChanged(int)),SLOT(selectKernel(int)));
     connect(this, SIGNAL(sendEnergyDest(QImage&)), &ed_view, SLOT(receiveEnergyDist(QImage&)));
     connect(this, SIGNAL(sendEnergy(QImage&)),&ed_gradient,SLOT(receiveEnergyDist(QImage&)));
 }
@@ -53,11 +62,36 @@ void MainWindow::openAction(){
         drawArea->setBackgroundImage(sc->getImage());
         //ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
         //emit sendEnergyDest(sc.energyDist);
+        kernelbox->setEnabled(true);
     }
 }
 
+void MainWindow::selectKernel(int index)
+{
+    switch(index)
+    {
+    case 0:
+        grad->setKernel(FAST);
+        break;
+    case 1:
+        grad->setKernel(PREWITT);
+        break;
+    case 2:
+        grad->setKernel(SOBEL);
+        break;
+    case 3:
+        grad->setKernel(LAPLACE);
+    }
+    grad->calculateGradients();
+    emit sendEnergyDest(sc->energyDist);
+    QImage eplot = grad->getEnergyPlot();
+    emit sendEnergy(eplot);
+}
+
 void MainWindow::resetMask(){
+    sc->setMask(drawArea->getImage());
     sc->clearMask();
+    drawArea->update();
 }
 
 void MainWindow::saveAsAction()

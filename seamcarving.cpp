@@ -17,7 +17,10 @@ std::vector<int> SeamCarving::getSeam(){
 }
 
 void SeamCarving::clearMask(){
-    this->mask->fill(qRgba(0,0,0,0));
+    if(mask!=NULL)
+    {
+        this->mask->fill(qRgba(0,0,0,0));
+    }
 }
 
 void SeamCarving::insertSeam(std::vector<int> xcord, int y){
