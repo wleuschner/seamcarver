@@ -19,6 +19,7 @@ public:
     QImage getGY();
     QImage getEnergyPlot();
     void calculateGradients();
+    QImage grey;
 
     ~GradientEnergy();
 
@@ -30,7 +31,6 @@ private:
     int width;
     short changes;
     QImage& image;
-    QImage grey;
     QImage Gx;
     QImage Gy;
     kernel mode;

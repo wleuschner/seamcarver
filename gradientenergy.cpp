@@ -42,14 +42,7 @@ void GradientEnergy::updateH(std::vector<int> seam){
             pixs[i+y*grey.width()]=pixs[i+(y+1)*grey.width()];
         }
     }
-    if(changes >= 2){
-        //std::clock_t t = std::clock();
-        calculateGradients();
-        //t = std::clock() - t;
-        //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
-        changes = 0;
-    }
-    changes++;
+    calculateGradients();
     height--;
 }
 

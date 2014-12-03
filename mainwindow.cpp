@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QDebug>
 #include <QComboBox>
 #include "seamcarving.h"
@@ -32,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     sc=0;
 
+    connect(ui->actionResize_Width,SIGNAL(triggered()),SLOT(resizeHorizontaly()));
+    connect(ui->actionResize_Height,SIGNAL(triggered()),SLOT(resizeVerticaly()));
     connect(ui->actionOpen, SIGNAL(triggered()), SLOT(openAction()));
     connect(ui->actionSave_As,SIGNAL(triggered()), SLOT(saveAsAction()));
     connect(ui->actionRemove_Seam,SIGNAL(triggered()),SLOT(removeSeamAction()));
@@ -63,6 +66,15 @@ void MainWindow::openAction(){
         //ui->ImageViewer->setPixmap(QPixmap::fromImage(image));
         //emit sendEnergyDest(sc.energyDist);
         kernelbox->setEnabled(true);
+
+        QStyle * wStyle = style();
+        QStyleOptionTitleBar so;
+        so.titleBarState = 1;       // kThemeStateActive
+        so.titleBarFlags = Qt::Window;
+        int titleBarHeight = wStyle->pixelMetric(QStyle::PM_TitleBarHeight, &so, this);
+        qDebug()<<titleBarHeight;
+
+        resize(this->size().width(),size().height()+ui->mainToolBar->size().height());
     }
 }
 
@@ -114,9 +126,10 @@ void MainWindow::removeSeamAction()
 void MainWindow::resizeEvent(QResizeEvent *event){
     if(sc!=0)
     {
-        int deltaWidth = sc->width - event->size().width();
-        int deltaHeight = sc->height - event->size().height();
-        qDebug()<<"Delta: "<<deltaWidth;
+        int deltaWidth = (sc->width - event->size().width());
+        int deltaHeight = (sc->height - event->size().height());
+        qDebug()<<"Delta: "<<deltaWidth<<":"<<event->oldSize().width() - event->size().width();
+
         if (deltaWidth > 0){
             for (int i = 0; i < deltaWidth; i++){
                 std::clock_t t = std::clock();
@@ -127,15 +140,32 @@ void MainWindow::resizeEvent(QResizeEvent *event){
         }
 
         if(deltaWidth < 0){
-            /*
+
             //find seams delta times
+            int hheight=0;
             std::vector< std::vector<int> > remove_seams(abs(deltaWidth));
             for (int i = 0; i < abs(deltaWidth); i++){
                 sc->findSeamV();
+                sc->width--;
                 remove_seams[i] = sc->getSeam();
+                hheight = remove_seams[i].size();
             }
-            //order seams
+
+            //transpoze da arrai
             std::vector< std::vector<int> > ordered_seams(image.height());
+            for(int y=0;y<hheight;y++)
+            {
+                std::vector<int> row(abs(deltaWidth));
+                for(int x=0;x<abs(deltaWidth);x++)
+                {
+                    row[x] = remove_seams[x][y];
+                }
+                std::sort(row.begin(),row.end());
+                ordered_seams[y] = row;
+            }
+            /*
+            //order seams
+            std::vector< std::vector<int> > ordered_seams(image.height());gbbbbbbbbgbb
             for(int y = 0; y < image.height(); y++){
                 std::vector<int> row(abs(deltaWidth));
                 for (int i = 0; i < abs(deltaWidth); i++){
@@ -143,15 +173,15 @@ void MainWindow::resizeEvent(QResizeEvent *event){
                 }
                 std::sort(row.begin(),row.end());
                 ordered_seams[y] = row;
-            }
+            }*/
             //insert seams
-            image.copy(0,0,image.width()-deltaWidth,image.height());
+            image=image.copy(0,0,sc->width+2*abs(deltaWidth),image.height());
             for (int i = 0; i < ordered_seams.size(); i++){
-                sc->insertSeam(ordered_seams[i], i);
+                sc->insertSeam(ordered_seams[i],i);
             }
             //energyfunction reset grey image
             grad->greyTones();
-            */
+
         }
 
         if(deltaHeight>0)
@@ -171,4 +201,98 @@ void MainWindow::resizeEvent(QResizeEvent *event){
         emit sendEnergy(eplot);
     }
     event->accept();
+}
+
+void MainWindow::resizeHorizontaly()
+{
+    int deltaWidth = -QInputDialog::getInt(this,"Resize Width","Width");
+    this->resize(size().width()+deltaWidth,size().height());
+    /*if(sc!=0)
+    {
+        qDebug()<<"Delta: "<<deltaWidth;
+        if (deltaWidth > 0){
+            for (int i = 0; i < deltaWidth; i++){
+                std::clock_t t = std::clock();
+                sc->removeSeamV();
+                t = std::clock() - t;
+                //qDebug()<<"TIME: "<<((float)t)/CLOCKS_PER_SEC;
+            }
+        }
+
+        if(deltaWidth < 0){
+
+            //find seams delta times
+            int hheight=0;
+            std::vector< std::vector<int> > remove_seams(abs(deltaWidth));
+            for (int i = 0; i < abs(deltaWidth); i++){
+                sc->findSeamV();
+                remove_seams[i] = sc->getSeam();
+                hheight = remove_seams[i].size();
+            }
+
+            //transpoze da arrai
+            std::vector< std::vector<int> > ordered_seams(image.height());
+            for(int y=0;y<hheight;y++)
+            {
+                std::vector<int> row(abs(deltaWidth));
+                for(int x=0;x<abs(deltaWidth);x++)
+                {
+                    row[x] = remove_seams[x][y];
+                }
+                std::sort(row.begin(),row.end());
+                ordered_seams[y] = row;
+            }
+            /*
+            //order seams
+            std::vector< std::vector<int> > ordered_seams(image.height());
+            for(int y = 0; y < image.height(); y++){
+                std::vector<int> row(abs(deltaWidth));
+                for (int i = 0; i < abs(deltaWidth); i++){
+                    row[i] = remove_seams[i][y];
+                }
+                std::sort(row.begin(),row.end());
+                ordered_seams[y] = row;
+            }
+            //insert seams
+            image.copy(0,0,image.width()-deltaWidth,image.height());
+            for (int i = 0; i < ordered_seams.size(); i++){
+                sc->insertSeam(ordered_seams[i]);
+            }
+            //energyfunction reset grey image
+            grad->greyTones();
+
+        }
+
+        drawArea->setBackgroundImage(sc->getImage());
+        drawArea->update();
+        //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
+        //QImage temp = grad->getGY();
+        emit sendEnergyDest(sc->energyDist);
+        QImage eplot = grad->getEnergyPlot();
+        emit sendEnergy(eplot);
+    }*/
+}
+
+void MainWindow::resizeVerticaly()
+{
+    if(sc!=0)
+    {
+        int deltaHeight = -QInputDialog::getInt(this,"Resize Height","Height");
+
+        if(deltaHeight>0)
+        {
+            for(int i = 0; i < deltaHeight; i++)
+            {
+                sc->removeSeamH();
+            }
+        }
+
+        drawArea->setBackgroundImage(sc->getImage());
+        drawArea->update();
+        //ui->ImageViewer->setPixmap(QPixmap::fromImage(sc->getImage()));
+        //QImage temp = grad->getGY();
+        emit sendEnergyDest(sc->energyDist);
+        QImage eplot = grad->getEnergyPlot();
+        emit sendEnergy(eplot);
+    }
 }

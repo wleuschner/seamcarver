@@ -35,6 +35,9 @@ private slots:
     void resetMask();
     void selectKernel(int);
 
+    void resizeVerticaly();
+    void resizeHorizontaly();
+
 private:
     SeamCarving* sc;
     EnergyDistView ed_view;

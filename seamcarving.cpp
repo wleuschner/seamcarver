@@ -23,15 +23,21 @@ void SeamCarving::clearMask(){
     }
 }
 
-void SeamCarving::insertSeam(std::vector<int> xcord, int y){
+void SeamCarving::insertSeam(std::vector<int> xcord,int h){
+    //image = image.copy(0,0,width+1,height);
     unsigned int* pixs = (unsigned int*) const_cast<unsigned char*> (image.bits());
-    for(int j = xcord.size()-1; j >=0; j--){
-        for (int x = width; x > xcord[j]; x--){
-            pixs[x] = pixs[x-1];
+    width=image.width();
+    qDebug()<<width<<":"<<xcord.size();
+    for(int y=xcord.size()-1;y>=0;y--)
+    {
+        for(int x=width-2;x>xcord[y];x--)
+        {
+            pixs[x+1+h*image.width()] = pixs[x+h*image.width()];
+            //pixs[x+1+h*image.width()] = qRgb(255,0,0);
+
         }
-        width++;
-        //pixs[xcord[j]] = //somecolor
     }
+    qDebug()<<width;
 }
 
 int SeamCarving::getEnergy(int x, int y){

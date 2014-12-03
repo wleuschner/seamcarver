@@ -24,16 +24,7 @@
     <cursorShape>CrossCursor</cursorShape>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -60,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>390</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -83,8 +74,16 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QMenu" name="menuResize_2">
+     <property name="title">
+      <string>Resize</string>
+     </property>
+     <addaction name="actionResize_Width"/>
+     <addaction name="actionResize_Height"/>
+    </widget>
     <addaction name="actionRemove_Seam"/>
     <addaction name="actionAdd_Seam"/>
+    <addaction name="menuResize_2"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -151,6 +150,16 @@
    </property>
    <property name="toolTip">
     <string>Deletes the current mask</string>
+   </property>
+  </action>
+  <action name="actionResize_Width">
+   <property name="text">
+    <string>Resize Width</string>
+   </property>
+  </action>
+  <action name="actionResize_Height">
+   <property name="text">
+    <string>Resize Height</string>
    </property>
   </action>
  </widget>
